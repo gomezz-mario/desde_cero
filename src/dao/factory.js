@@ -7,7 +7,6 @@ export let Cart;
 
 switch (persistence) {
     case 'MONGO':
-        console.log('Persistence: MONGO');
         const { default: ProductMongo } = await import('./mongo/products.mongo.js')
         Product = ProductMongo;
         const { default: UserMongo } = await import('./mongo/users.mongo.js')
@@ -20,7 +19,6 @@ switch (persistence) {
 		*/
         break;
     case 'FILE':
-        console.log('Persistence: FILE');
         const { default: ProductFile } = await import('./file/products.file.js')
         Product = ProductFile;
 		const { default: UserFile } = await import('./file/users.file.js')
@@ -33,7 +31,6 @@ switch (persistence) {
 		*/
         break;
     default:
-        console.log('Persistence: MEMORY');
         const { default: ProductMemory } = await import('./memory/products.memory.js')
         Product = ProductMemory;
 		const { default: UserMemory } = await import('./memory/users.memory.js')

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { mongoUrl } from "../../config.js";
+import { logger } from "../../utils/logger.js";
 
 class ConnectMongo{
 	static #instance;
@@ -8,11 +9,11 @@ class ConnectMongo{
 	};
 	static getInstance = () => {
 		if(this.#instance){
-			console.log('Already connected!');
+			logger.debug("Already connected!")
 			return this.#instance;
 		}
+		logger.debug("Mongo connected!")
 		this.#instance = new ConnectMongo();
-		console.log('Connected!');
 		return this.#instance;
 	}
 }

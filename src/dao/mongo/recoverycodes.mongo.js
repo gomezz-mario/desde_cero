@@ -1,6 +1,6 @@
 import RecoverycodeModel from "./models/recoverycode.model.js";
 import Connect from "./connect.mongo.js";
-import { createHash } from "../../utils.js";
+import { createHash } from "../../utils/bcrypt.js";
 
 class RecoveryCode{
 	constructor(){

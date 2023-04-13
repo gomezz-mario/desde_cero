@@ -1,15 +1,17 @@
 import express from "express";
 import session from 'express-session';
 import passport from "passport";
-import initializePassport from "./moduls/passport/passport.js"
+import initializePassport from "./modules/passport/passport.js"
 import { productsRouter, cartsRouter, usersRouter } from "./routes/index.js";
 import MongoStore from 'connect-mongo';
 import { port, secretSessionKey, dbName, mongoUrl } from "./config.js";
+import { addLogger, logger } from "./utils/logger.js";
 
 const app = express();
 
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
+
 
 app.use(session({
 	store: MongoStore.create({
@@ -29,8 +31,18 @@ app.use(session({
 app.use(passport.initialize());
 initializePassport();
 
+app.use(addLogger);
 app.use('/api/products', productsRouter.getRouter());
 app.use('/api/carts', cartsRouter.getRouter());
 app.use('/api/users', usersRouter.getRouter());
+app.use('/loggerTest', (req, res) => {
+	req.logger.fatal("Fatal mensaje");
+	req.logger.error("Error mensaje");
+	req.logger.warn("Warning mensaje");
+	req.logger.info("Info mensaje");
+	req.logger.http("Http mensaje");
+	req.logger.debug("Debug mensaje");
+	res.send("OK")
+});
 
-app.listen(port, console.log("Listening ..."));
+app.listen(port, logger.info(`Server listening in port ${port}`));
