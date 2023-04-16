@@ -1,0 +1,177 @@
+paths:
+  /api/users:
+    get:
+      summary: Login de usuario.
+      tags:
+      - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/loginUser'
+      responses:
+        "200":
+          description: Usuario inicia sesión exitosamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/User'
+    post:
+      summary: Registro de usuario.
+      tags:
+      - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/registerUser'
+      responses:
+        "200":
+          description: Usuario registrado. Usuario logueado.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/User'
+  /api/users/logout:
+    get:
+      summary: Logout. Cierre de sesión.
+      tags:
+      - User
+      responses:
+        "204":
+          description: El usuario cerró sesión exitosamente.
+  /api/users/send_recovery_email?email={email}:
+    get:
+      summary: Envío de enlace de recuperación de cuenta a email del usuario.
+      tags:
+      - User
+      parameters:
+      - name: email
+        in: path
+        required: true
+        description: Email del usuario
+        schema:
+          $type: String
+      responses:
+        "204":
+          description: Email de recuperación enviado exitosamente.
+
+  /api/users/recovery_my_acount?email={email}&code={code}:
+    get:
+      summary: Recuperar cuenta mediante enlace de recuperación de cuenta.
+      tags:
+      - User
+      parameters:
+      - name: email
+        in: path
+        required: true
+        description: Email del usuario
+        schema:
+          $type: String
+      - name: code
+        in: path
+        required: true
+        description: Código de recuperación de la cuenta
+        schema:
+          $type: String
+      responses:
+        "204":
+          description: Cuenta recuperada. Usuario logueado.
+  
+
+
+components:
+  requestBodies:
+    loginUser:
+      type: object
+      properties:
+        email:
+          type: String
+          description: Email.
+        password:
+          type: String
+          description: Contraseña.
+      example:
+        email: gomez.92m@gmail.com
+        password: secret
+    registerUser:
+      type: object
+      properties:
+        firstName:
+          type: String
+          required: false
+          description: Nombre.
+        lastName:
+          type: String
+          required: false
+          description: Apellido.
+        fullName:
+          type: String
+          required: false
+          description: Nombre completo.
+        username:
+          type: String
+          required: false
+          description: Alias.
+        email:
+          type: String
+          required: true
+          description: Email.
+        password:
+          type: String
+          required: true
+          description: Password.
+      example:
+        firstName: Mario
+        lastName: Gomez
+        fullName: Mario Gomez
+        username: marito
+        email: gomez.92m@gmail.com
+        password: secret
+  schemas:
+    User:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: ID autogenerado en Mongo.
+        firstName:
+          type: String
+          description: Nombre.
+        lastName:
+          type: String
+          description: Apellido.
+        fullName:
+          type: String
+          description: Nombre completo.
+        username:
+          type: String
+          description: Alias.
+        email:
+          type: String
+          description: Email.
+        password:
+          type: String
+          description: Password hasheado.
+        role:
+          type: String
+          description: Role. Politicas y permisos.
+        social:
+          type: String
+          description: Red social desde la cual inicia sesión.
+        recoveryCode:
+          type: ObjectId
+          description: ID de código de recuperacion de cuenta.
+      example:
+        _id: ObjectId('6436f92ebb31ec69c69a592b')
+        firstName: Mario
+        lastName: Gomez
+        fullName: Mario Gomez
+        username: marito
+        email: gomez.92m@gmail.com
+        password: "$2b$10$wzri/aHq/UBPXBGcxAqIGu4kefCYee9UBCdc6qWwl0JWc/Lvlhd1."
+        role: user
+        social: github
+        recoveryCode: ObjectId('6436ffe41bdaab4d1eaea899')

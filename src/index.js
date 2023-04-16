@@ -6,12 +6,15 @@ import { productsRouter, cartsRouter, usersRouter } from "./routes/index.js";
 import MongoStore from 'connect-mongo';
 import { port, secretSessionKey, dbName, mongoUrl } from "./config.js";
 import { addLogger, logger } from "./utils/logger.js";
+import {swaggerServe, swaggerUiExpressSpecs} from "./config/swagger.config.js";
 
 const app = express();
 
+
+
+app.use('/apidocs', swaggerServe, swaggerUiExpressSpecs);
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
-
 
 app.use(session({
 	store: MongoStore.create({

@@ -1,0 +1,202 @@
+paths:
+  /api/carts:
+    post:
+      summary: Crea un nuevo carrito vacío.
+      tags:
+      - Cart
+      responses:
+        "200":
+          description: Devuelve el carrito creado exitosamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: ObjectId
+                    description: Id autogenerado en mongo.
+                    example: ObjectId('63cf33944420ed5f3056ab2a')
+                  products:
+                    type: array
+                    description: Array de productos en el carrito. Como es nuevo, está vacío.
+                    example: []
+  /api/carts/{cid}:
+    get:
+      summary: Devuelve el carrito solicitado.
+      tags:
+      - Cart
+      parameters:
+      - name: cid
+        type: String
+        in: path
+        required: true
+        description: Id del carrito que se solicita.
+        example: 63cf33944420ed5f3056ab2a
+      responses:
+        "200":
+          description: Devuelve el carrito solicitado.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Cart'
+    delete:
+      summary: Elimina el carrito especificado.
+      tags:
+      - Cart
+      parameters:
+      - name: cid
+        type: String
+        in: path
+        required: true
+        description: Id del carrito que se va a eliminar.
+        example: 63cf33944420ed5f3056ab2a
+      responses:
+        "204":
+          description: Elimina el carrito exitosamente.  
+  /api/carts/{cid}/addProducts:
+    put:
+      summary: Devuelve el carrito agregando los nuevos productos.
+      tags:
+      - Cart
+      parameters:
+      - name: cid
+        type: String
+        in: path
+        required: true
+        description: Id del carrito que se solicita.
+        example: 63cf33944420ed5f3056ab2a
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/addProducts' 
+      responses:
+        "200":
+          description: Devuelve el carrito con los nuevos productos agregados exitosamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Cart'
+  /api/carts/{cid}/setProducts:
+    put:
+      summary: Devuelve el carrito con las cantidades de los productos actualizados.
+      tags:
+      - Cart
+      parameters:
+      - name: cid
+        type: String
+        in: path
+        required: true
+        description: Id del carrito que se solicita.
+        example: 63cf33944420ed5f3056ab2a
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/addProducts' 
+      responses:
+        "200":
+          description: Devuelve el carrito con las cantidades de productos actualizadas exitosamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Cart'
+  /api/carts/{cid}/deleteProducts:
+    put:
+      summary: Devuelve el carrito quitando del mismo los productos especificados.
+      tags:
+      - Cart
+      parameters:
+      - name: cid
+        type: String
+        in: path
+        required: true
+        description: Id del carrito que se solicita.
+        example: 63cf33944420ed5f3056ab2a
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/deleteProducts' 
+      responses:
+        "200":
+          description: Devuelve el carrito quitando del mismo los productos especificados exitosamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Cart'
+  /api/carts/{cid}/deleteAllProducts:
+    put:
+      summary: Devuelve el carrito quitando todos los productos.
+      tags:
+      - Cart
+      parameters:
+      - name: cid
+        type: String
+        in: path
+        required: true
+        description: Id del carrito que se solicita.
+        example: 63cf33944420ed5f3056ab2a
+      responses:
+        "200":
+          description: Devuelve el carrito quitando todos los productos exitosamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: ObjectId
+                    description: Id del carrito.
+                    example: ObjectId('63cf33944420ed5f3056ab2a')
+                  products:
+                    type: array
+                    example: []
+components:
+  schemas:
+    Cart:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: Id del carrito.
+          example: ObjectId('63cf33944420ed5f3056ab2a')
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              _id:
+                type: ObjectId
+                description: Id del producto.
+                example: ObjectId('63c9772da67a2a1d5bb31b82')
+              quantity:
+                type: Number
+                description: Unidades del producto en el carrito.
+                example: 1
+  requestBodies:
+    addProducts:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              _id:
+                type: ObjectId
+                description: Id del producto que se agrega al carrito.
+                example: ObjectId('63c9772da67a2a1d5bb31b82')
+              quantity:
+                type: Number
+                decription: Unidades del producto que se agregan al carrito.
+                example: 1
+    deleteProducts:
+      type: array
+      items:
+        type: String
+        description: Id del producto que se va a quitar del carrito.
+        example: 6436fe6f1bdaab4d1eaea886

@@ -1,0 +1,249 @@
+paths:
+  /api/products?limit={limit}&page={page}&filters={filters}&sort={sort}:
+    get:
+      summary: Trae una página de productos.
+      tags:
+      - Product
+      parameters:
+        - name: limit
+          type: Number
+          in: path
+          required: false
+          description: Cantidad máxima de productos por página. Por defecto vale 10.
+          example: 2
+        - name: page
+          type: Number
+          in: path
+          required: false
+          description: Número de página. Por defecto es igual a 1.
+          example: 1
+        - name: filters
+          type: String
+          in: path
+          required: false
+          description: Indica los métodos de filtrado que se aplican a la búsqueda.
+          example: "disponible-tablets" 
+        - name: sort
+          type: String
+          in: path
+          required: false
+          description: Indica el método de ordenamiento.
+          example: "amaseconomico"
+      responses:
+        "200":
+          description: Trae una página de productos.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  products:
+                    type: array
+                    items:
+                      $ref: '#components/schemas/Product'
+                  pagination:
+                    tipe: object
+                    $ref: '#components/objects/Pagination'
+  
+  /api/products/{pid}:
+    get:
+      summary: Devuelve el producto solicitado.
+      tags:
+      - Product
+      parameters:
+      - name: pid
+        type: String
+        in: path
+        required: true
+        description: Id del producto solicitado.
+        example: '6436f92ebb31ec69c69a592b'
+      responses:
+        "200":
+          description: Devuelve el producto solicitado exitosamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#components/schemas/Product'
+    put:
+      summary: Actualiza el producto especificado. El usuario debe estar autenticado. Los usuarios PREMIUM pueden actualizar productos que le pertenezcan.
+      tags:
+      - Product
+      parameters:
+      - name: pid
+        type: String
+        in: path
+        required: true
+        description: Id del producto solicitado.
+        example: '6436f92ebb31ec69c69a592b'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/createProduct'
+      responses:
+        "200":
+          description: Devuelve el producto actualizado exitosamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#components/schemas/Product'
+    delete:
+      summary: Eliminado el producto especificado. El usuario debe estar autenticado. Los usuarios PREMIUM pueden eliminar productos que le pertenezcan.
+      tags:
+      - Product
+      parameters:
+      - name: pid
+        type: String
+        in: path
+        required: true
+        description: Id del producto solicitado.
+        example: '6436f92ebb31ec69c69a592b'
+      responses:
+        "204":
+          description: El producto es eliminado exitosamente.
+  /api/products/:
+    post:
+      summary: Crea un nuevo producto. El usuario debe estar autenticado para hacer esta petición. Solo los usuarios PREMIUM pueden crear productos.
+      tags:
+      - Product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/createProduct' 
+      responses:
+        "200":
+          description: Devuelve el producto creado.
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#components/schemas/Product'
+  
+components:
+  schemas:      
+    Product:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: ID autogenerado en Mongo.
+        title:
+          type: String
+          description: Nombre del producto.
+        price:
+          type: Number
+          description: Precio.
+        stock:
+          type: Number
+          description: Cantidad del producto disponible.
+        status:
+          type: Boolean
+          description: Disponible o no disponible.
+        code:
+          type: Number
+          description: Código del producto.
+        description:
+          type: String
+          description: Descripción del producto.
+        thumnails:
+          type: Array
+          description: url de imagenes del producto.
+        owner:
+          type: ObjectId
+          description: ID del usuario vendedor del producto.
+      example:
+        _id: ObjectId('6436f92ebb31ec69c69a592b')
+        title: Mousepad
+        description: Mousepad Gamer de escritorio. Color negro. Grande.
+        code: 1231123
+        price: 6000
+        status: true
+        stock: 5
+        thumnails: ["https://tecnovortex.com/wp-content/uploads/2016/11/pad-gaming-race.jpg"]
+        owner: ObjectId('6436ffe41bdaab4d1eaea899')
+  
+  objects:
+    Pagination:
+      type: object
+      properties:
+        limit:
+          type: Number
+          description: Cantidad de productos por página.
+        totalPages:
+          type: Number
+          description: Cantidad total de páginas.
+        totalDocs:
+          type: Number
+          description: Cantidad total de productos que coinciden con la búsqueda.
+        page:
+          type: Number
+          description: Número de página actual
+        prevPage:
+          type: Number
+          description: Número de página anterior. Si no existe es null.
+        nextPage:
+          type: Number
+          description: Número de página posterior. Si no existe es null.
+        hasNextPage:
+          type: Boolean
+          description: Indica si existe la página posterior.
+        hasPrevPage:
+          type: Boolean
+          description: Indica si existe la página anterior.
+        nextLink:
+          type: String
+          description: Url a página posterior. Si la página posterior no existe es null.
+        prevLink:
+          type: String
+          description: Url a página anterior. Si la página anterior no existe es null.
+      example:
+        limit: 10
+        totalPages: 3
+        totalDocs: 25
+        page: 1
+        prevPage: null
+        nextPage: 2
+        hasNextPage: true
+        hasPrevPage: false
+        nextLink: "/api/products?limit=10&page=2&filters=disponible-tablets&sort=amaseconomico"
+        prevLink: null
+
+  requestBodies:
+    createProduct:
+      type: object
+      properties:
+        title:
+          type: String
+          description: Nombre del producto.
+        price:
+          type: Number
+          description: Precio.
+        stock:
+          type: Number
+          description: Cantidad del producto disponible.
+        status:
+          type: Boolean
+          description: Disponible o no disponible.
+        code:
+          type: Number
+          description: Código del producto.
+        description:
+          type: String
+          description: Descripción del producto.
+        thumnails:
+          type: Array
+          description: url de imagenes del producto.
+      example:
+        title: Mousepad
+        description: Mousepad Gamer de escritorio. Color negro. Grande.
+        code: 1231123
+        price: 6000
+        status: true
+        stock: 5
+        thumnails: ["https://tecnovortex.com/wp-content/uploads/2016/11/pad-gaming-race.jpg"]
+        
